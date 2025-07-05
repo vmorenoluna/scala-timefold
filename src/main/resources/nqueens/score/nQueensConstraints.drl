@@ -1,0 +1,37 @@
+package nqueens.score;
+    dialect "java"
+
+import ai.timefold.solver.core.api.score.buildin.simple.SimpleScoreHolder;
+import nqueens.model.Queen;
+
+global SimpleScoreHolder scoreHolder;
+
+// ############################################################################
+// Hard constraints
+// ############################################################################
+
+rule "Horizontal conflict"
+    when
+        Queen($id : id, row != null, $i : rowIndex)
+        Queen(id > $id, rowIndex == $i)
+    then
+        scoreHolder.addConstraintMatch(kcontext, -1);
+end
+
+// Vertical conflict is impossible due the model
+
+rule "Ascending diagonal conflict"
+    when
+        Queen($id : id, row != null, $i : ascendingDiagonalIndex)
+        Queen(id > $id, ascendingDiagonalIndex == $i)
+    then
+        scoreHolder.addConstraintMatch(kcontext, -1);
+end
+
+rule "Descending diagonal conflict"
+    when
+        Queen($id : id, row != null, $i : descendingDiagonalIndex)
+        Queen(id > $id, descendingDiagonalIndex == $i)
+    then
+        scoreHolder.addConstraintMatch(kcontext, -1);
+end
