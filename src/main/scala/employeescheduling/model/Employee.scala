@@ -7,18 +7,18 @@ import java.util.{Set => JSet}
 import scala.beans.BeanProperty
 
 case class Employee(
-                     @PlanningId
-                     @BeanProperty
-                     name: String,
-                     @BeanProperty
-                     skills: JSet[String],
-                     @BeanProperty
-                     unavailableDates: JSet[LocalDate],
-                     @BeanProperty
-                     undesiredDates: JSet[LocalDate],
-                     @BeanProperty
-                     desiredDates: JSet[LocalDate]
-                   ) {
+    @PlanningId
+    @BeanProperty
+    name: String,
+    @BeanProperty
+    skills: JSet[String],
+    @BeanProperty
+    unavailableDates: JSet[LocalDate],
+    @BeanProperty
+    undesiredDates: JSet[LocalDate],
+    @BeanProperty
+    desiredDates: JSet[LocalDate]
+) {
 
   def this() = {
     this(null, null, null, null, null)
@@ -29,7 +29,7 @@ case class Employee(
 
   override def equals(obj: Any): Boolean = obj match {
     case Employee(name, _, _, _, _) if name == this.name => true
-    case _ => false
+    case _                                               => false
   }
 
   override def hashCode: Int =

@@ -13,12 +13,13 @@ import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintCollectors;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
 import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
+import ai.timefold.solver.core.api.score.stream.bi.BiConstraintCollector;
 import ai.timefold.solver.core.api.score.stream.common.LoadBalance;
 
 import employeescheduling.model.Employee;
 import employeescheduling.model.Shift;
 
-public class EmployeeSchedulingConstraintProvider implements ConstraintProvider {
+public class JEmployeeSchedulingConstraintProvider implements ConstraintProvider {
 
     private static int getMinuteOverlap(Shift shift1, Shift shift2) {
         // The overlap of two timeslot occurs in the range common to both timeslots.
@@ -59,7 +60,7 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
         return constraintFactory.forEachUniquePair(Shift.class, equal(Shift::getEmployee),
                 overlapping(Shift::getStart, Shift::getEnd))
                 .penalize(HardSoftBigDecimalScore.ONE_HARD,
-                        EmployeeSchedulingConstraintProvider::getMinuteOverlap)
+                        JEmployeeSchedulingConstraintProvider::getMinuteOverlap)
                 .asConstraint("Overlapping shift");
     }
 
@@ -111,6 +112,10 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
     }
 
     Constraint balanceEmployeeShiftAssignments(ConstraintFactory constraintFactory) {
+        BiConstraintCollector<Employee, Integer, ?, LoadBalance<Employee>> employeeIntegerLoadBalanceBiConstraintCollector = ConstraintCollectors.loadBalance(
+                (Employee employee, Integer shiftCount) -> employee,
+                (employee, shiftCount) -> shiftCount
+        );
         return constraintFactory.forEach(Shift.class)
                 .groupBy(Shift::getEmployee, ConstraintCollectors.count())
                 .complement(Employee.class, e -> 0) // Include all employees which are not assigned to any shift.c
